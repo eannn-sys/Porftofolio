@@ -1,0 +1,433 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Arcade Portfolio - Player 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-blue: #00ffff;
+            --neon-green: #39ff14;
+            --bg-dark: #0a0a0a;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Efek Scanline untuk nuansa CRT */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .pixel-border {
+            border: 4px solid #fff;
+            box-shadow: 8px 8px 0px var(--neon-pink);
+            image-rendering: pixelated;
+        }
+
+        .text-glow-green {
+            text-shadow: 0 0 10px var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .text-glow-pink {
+            text-shadow: 0 0 10px var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        .text-glow-blue {
+            text-shadow: 0 0 10px var(--neon-blue);
+            color: var(--neon-blue);
+        }
+
+        .btn-arcade {
+            background: #fff;
+            color: #000;
+            padding: 1rem 2rem;
+            position: relative;
+            transition: all 0.2s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            box-shadow: 6px 6px 0px var(--neon-blue);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            text-decoration: none;
+        }
+
+        .btn-arcade:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0px var(--neon-pink);
+        }
+
+        .arcade-card {
+            background: rgba(20, 20, 20, 0.9);
+            border: 3px solid #333;
+            padding: 1.5rem;
+            transition: 0.3s;
+        }
+
+        .arcade-card:hover {
+            border-color: var(--neon-blue);
+            transform: scale(1.02);
+        }
+
+        /* Cartridge Card Design */
+        .cartridge-card {
+            background: #252525;
+            border: 4px solid #444;
+            border-bottom: 12px solid #111;
+            box-shadow: 0px 10px 0px #000, 0 0 15px rgba(0,255,255,0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cartridge-card:hover {
+            transform: translateY(10px); /* Efek tercolok masuk ke dalam slot */
+            border-color: var(--neon-blue);
+            box-shadow: 0px 2px 0px #000, 0 0 25px rgba(0,255,255,0.4);
+        }
+
+        .cartridge-label {
+            background: linear-gradient(180deg, #111 0%, #222 100%);
+            border: 3px dashed #555;
+        }
+
+        .cartridge-card:hover .cartridge-label {
+            border-color: var(--neon-pink);
+        }
+
+        .progress-container {
+            background: #222;
+            height: 20px;
+            border: 2px solid #fff;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        section {
+            padding: 80px 20px;
+        }
+
+        /* Glitch animation */
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        .glitch:hover {
+            animation: glitch 0.3s infinite;
+        }
+
+        nav {
+            background: #000;
+            border-bottom: 4px solid var(--neon-blue);
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-pink);
+        }
+
+        /* Blinking animation */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .blink-fast {
+            animation: blink 0.8s infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Nav -->
+    <nav class="fixed w-full z-50 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="text-xs md:text-lg glitch text-glow-pink">P1_DASHBOARD</div>
+            <div class="flex space-x-6 text-[10px] md:text-xs">
+                <a href="#hero" class="hover:text-cyan-400">START</a>
+                <a href="#skills" class="hover:text-cyan-400">SKILLS</a>
+                <a href="#kerja" class="hover:text-cyan-400">QUESTS</a>
+                <a href="#blog" class="hover:text-cyan-400">SAVE_LOG</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Section 1: Hero -->
+    <section id="hero" class="min-h-screen flex items-center justify-center pt-20">
+        <div class="max-w-4xl text-center px-4">
+            <p class="text-xs mb-4 text-glow-green">INSERT COIN TO CONTINUE...</p>
+            <h1 class="text-2xl md:text-5xl font-bold mb-8 leading-relaxed">
+                SELAMAT DATANG DI <br>
+                <span class="text-glow-pink">STAGE 01</span> WEBSITE GUE
+            </h1>
+            <p class="text-[10px] md:text-sm text-gray-400 mb-12 max-w-2xl mx-auto leading-loose">
+                Gue bikin portal ini buat nunjukin "high score" gue di dunia networking dan ngoding. Cek aja kelengkapan gear gue di bawah.
+            </p>
+            <div class="space-y-6 md:space-y-0 md:space-x-6">
+                <a href="#blog" class="btn-arcade">IKUTI GUE (1P)</a>
+                <!-- Link MY ACCOUNT updated to @aaarzaaa__ -->
+                <a href="https://instagram.com/aaarzaaa__" target="_blank" class="btn-arcade" style="box-shadow: 6px 6px 0px var(--neon-green);">MY ACCOUNT</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Skills (Stats) -->
+    <section id="skills" class="bg-black/50 border-y-4 border-dashed border-gray-800">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-xl md:text-3xl text-center mb-16 text-glow-green">CHARACTER STATS</h2>
+            
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="arcade-card pixel-border">
+                    <p class="text-xs leading-loose">
+                        Gue punya build yang balance antara <span class="text-cyan-400">System Structuring</span> dan <span class="text-pink-500">Network Routing</span>. 
+                        Gak cuma jago ngerakit kabel, gue juga bisa bikin logic yang solid.
+                    </p>
+                    <div class="mt-6 flex space-x-4">
+                        <span class="text-xs bg-gray-800 p-2">LVL. 99</span>
+                        <span class="text-xs bg-gray-800 p-2">EXP. MAX</span>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <div>
+                        <div class="flex justify-between text-[10px]">
+                            <span>HTML_STRUCTURE</span>
+                            <span class="text-glow-green">95%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px]">
+                            <span>PYTHON_LOGIC</span>
+                            <span class="text-glow-green">80%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px]">
+                            <span>CISCO_SYSTEMS</span>
+                            <span class="text-glow-green">85%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px]">
+                            <span>MIKROTIK_PRO</span>
+                            <span class="text-glow-green">90%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Pengalaman Kerja (Quest History) -->
+    <section id="kerja">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-xl md:text-3xl text-center mb-16 text-glow-pink">QUEST HISTORY</h2>
+            
+            <div class="space-y-12">
+                <div class="arcade-card relative">
+                    <div class="absolute -left-2 top-0 bg-pink-600 px-2 py-1 text-[8px]">COMPLETED</div>
+                    <h3 class="text-lg text-cyan-400 mb-2">NETWORK ENGINEER @ TECHFOREST</h3>
+                    <p class="text-[10px] text-gray-500 mb-4">2023 - PRESENT</p>
+                    <p class="text-xs leading-relaxed">
+                        Nangani bos level sulit di bagian routing & switching. Pastiin data paket gak kena "game over" di tengah jalan.
+                    </p>
+                </div>
+
+                <div class="arcade-card relative">
+                    <div class="absolute -left-2 top-0 bg-pink-600 px-2 py-1 text-[8px]">COMPLETED</div>
+                    <h3 class="text-lg text-cyan-400 mb-2">IT SUPPORT @ CREATIVE ROOTS</h3>
+                    <p class="text-[10px] text-gray-500 mb-4">2021 - 2023</p>
+                    <p class="text-xs leading-relaxed">
+                        Side quest harian: troubleshoot hardware dan setup Mikrotik biar client gak nge-lag pas lagi kerja.
+                    </p>
+                </div>
+
+                <div class="arcade-card relative">
+                    <div class="absolute -left-2 top-0 bg-pink-600 px-2 py-1 text-[8px]">COMPLETED</div>
+                    <h3 class="text-lg text-cyan-400 mb-2">INTERNSHIP @ STARTUP HIJAU</h3>
+                    <p class="text-[10px] text-gray-500 mb-4">2020</p>
+                    <p class="text-xs leading-relaxed">
+                        Tutorial Mode: Belajar Python buat otomatisasi biar kerjaan jadi "easy mode".
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Blog (Save Logs) -->
+    <section id="blog" class="bg-zinc-950 border-t-4 border-double border-zinc-800">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-xl md:text-3xl text-glow-green mb-4">CHOOSE YOUR ADVENTURE</h2>
+                <p class="text-[10px] text-gray-400 blink-fast">▼ SELECT CARTRIDGE TO PLAY / READ LOGS ▼</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-10">
+                <!-- Log 1: Cartridge Style -->
+                <div class="cartridge-card p-6 flex flex-col justify-between">
+                    <div>
+                        <!-- Cartridge Top Grips -->
+                        <div class="flex justify-between mb-4">
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                        </div>
+                        
+                        <!-- Main Label Sticker -->
+                        <div class="cartridge-label p-4 rounded-lg mb-4 text-center">
+                            <div class="text-[32px] mb-2">🏔️</div>
+                            <span class="text-[8px] px-2 py-1 bg-pink-600 text-white rounded font-bold">LOG #001</span>
+                            <h3 class="text-[11px] text-glow-blue mt-3 font-bold uppercase tracking-wider">CISCO WILD TRIP</h3>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-[9px] text-zinc-300 leading-relaxed min-h-[60px]">
+                            Simulasi network pas camping. Cari sinyal di antara rimbunnya pohon sambil nahan serangan nyamuk sebagai bos level akhir.
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-zinc-800 flex justify-between items-center">
+                            <span class="text-[8px] text-green-400">RUNNING OK</span>
+                            <span class="text-[9px] text-zinc-500 hover:text-white transition">READ &gt;&gt;</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log 2: Cartridge Style -->
+                <div class="cartridge-card p-6 flex flex-col justify-between">
+                    <div>
+                        <!-- Cartridge Top Grips -->
+                        <div class="flex justify-between mb-4">
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                        </div>
+                        
+                        <!-- Main Label Sticker -->
+                        <div class="cartridge-label p-4 rounded-lg mb-4 text-center">
+                            <div class="text-[32px] mb-2">🐍</div>
+                            <span class="text-[8px] px-2 py-1 bg-yellow-600 text-white rounded font-bold">LOG #002</span>
+                            <h3 class="text-[11px] text-glow-green mt-3 font-bold uppercase tracking-wider">PYTHON BOTNET</h3>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-[9px] text-zinc-300 leading-relaxed min-h-[60px]">
+                            Nge-bypass kerjaan repetitif setup Mikrotik pake automation script Python. Bye-bye klik-klik manual di Winbox!
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-zinc-800 flex justify-between items-center">
+                            <span class="text-[8px] text-green-400">RUNNING OK</span>
+                            <span class="text-[9px] text-zinc-500 hover:text-white transition">READ &gt;&gt;</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log 3: Cartridge Style -->
+                <div class="cartridge-card p-6 flex flex-col justify-between">
+                    <div>
+                        <!-- Cartridge Top Grips -->
+                        <div class="flex justify-between mb-4">
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                            <div class="w-2 h-8 bg-zinc-700 rounded-sm"></div>
+                        </div>
+                        
+                        <!-- Main Label Sticker -->
+                        <div class="cartridge-label p-4 rounded-lg mb-4 text-center">
+                            <div class="text-[32px] mb-2">🔌</div>
+                            <span class="text-[8px] px-2 py-1 bg-purple-600 text-white rounded font-bold">LOG #003</span>
+                            <h3 class="text-[11px] text-glow-pink mt-3 font-bold uppercase tracking-wider">CABLE CHAOS VS ZEN</h3>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-[9px] text-zinc-300 leading-relaxed min-h-[60px]">
+                            Seni merapikan tumpukan router dan switch berantakan biar sedap dipandang, seimbang, dan mengalir bagai energi alam.
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-zinc-800 flex justify-between items-center">
+                            <span class="text-[8px] text-green-400">RUNNING OK</span>
+                            <span class="text-[9px] text-zinc-500 hover:text-white transition">READ &gt;&gt;</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t-4 border-zinc-800 text-center">
+        <p class="text-[10px] text-gray-600">
+            GAME OVER? NAH, JUST SAVING... <br><br>
+            MADE BY PLAYER_01 &copy; 2024 <br>
+            <span class="text-pink-500">PRESS [F5] TO REPLAY</span>
+        </p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId.startsWith('#')) {
+                    e.preventDefault();
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+```
